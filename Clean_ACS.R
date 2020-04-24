@@ -119,3 +119,5 @@ household <- read_csv("../Raw Data/ACSST1Y2018.S2501_data_with_overlays_2020-04-
 household <- cleanACS(household)
 
 acs <- left_join(acs, household, by = "id")
+
+write_csv(acs, "ACS.csv")
