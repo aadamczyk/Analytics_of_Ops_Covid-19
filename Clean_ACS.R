@@ -77,3 +77,5 @@ housing <- read_csv("../Raw Data/ACSST5Y2018.S2504_data_with_overlays_2020-04-26
 housing <- cleanACS(housing)
 
 acs <- left_join(acs, housing, by = "id")
+
+write.csv(acs, file = "ACS.csv", row.names = F)
