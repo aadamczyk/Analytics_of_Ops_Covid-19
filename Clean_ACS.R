@@ -11,113 +11,69 @@ cleanACS <- function(df) {
 
 # Age ---------------------------------------------------------------------
 
-age <- read_csv("../Raw Data/ACSST1Y2018.S0101_data_with_overlays_2020-04-24T114534.csv",
+age <- read_csv("../Raw Data/ACSST5Y2018.S0101_data_with_overlays_2020-04-26T231254.csv",
                        skip = 1)
 acs <- cleanACS(age)
 
-# Race --------------------------------------------------------------------
+# Language ---------------------------------------------------------------------
 
-race <- read_csv("../Raw Data/ACSDT1Y2018.B02001_data_with_overlays_2020-04-24T114843.csv",
-                       skip = 1)
-race <- cleanACS(race)
+language <- read_csv("../Raw Data/ACSST5Y2018.S1603_data_with_overlays_2020-04-26T231636.csv",
+                skip = 1)
 
-acs <- left_join(acs, race, by = "id")
+language <- cleanACS(language)
 
-# Ethnicity ---------------------------------------------------------------
+acs <- left_join(acs, language, by = "id")
 
-ethnicity <- read_csv("../Raw Data/ACSDT1Y2018.B04004_data_with_overlays_2020-04-24T115051.csv",
-                 skip = 1)
-ethnicity <- cleanACS(ethnicity)
+# Disability ---------------------------------------------------------------------
 
-acs <- left_join(acs, ethnicity, by = "id")
+disability <- read_csv("../Raw Data/ACSST5Y2018.S1810_data_with_overlays_2020-04-26T232305.csv",
+                     skip = 1)
 
-
-# Housing Type ---------------------------------------------------------------
-
-housetype <- read_csv("../Raw Data/ACSST1Y2018.S1101_data_with_overlays_2020-04-24T115854.csv",
-                      skip = 1)
-housetype <- cleanACS(housetype)
-
-acs <- left_join(acs, housetype, by = "id")
-
-# Disability ---------------------------------------------------------------
-
-disability <- read_csv("../Raw Data/ACSST1Y2018.S1810_data_with_overlays_2020-04-24T115954.csv",
-                      skip = 1)
 disability <- cleanACS(disability)
 
 acs <- left_join(acs, disability, by = "id")
 
-# Insurance ---------------------------------------------------------------
+# Food Stamps ---------------------------------------------------------------------
 
-insurance <- read_csv("../Raw Data/ACSST1Y2018.S2703_data_with_overlays_2020-04-24T120143.csv",
+foodStamps <- read_csv("../Raw Data/ACSST5Y2018.S2201_data_with_overlays_2020-04-26T232507.csv",
                        skip = 1)
-insurance <- cleanACS(insurance)
 
-acs <- left_join(acs, insurance, by = "id")
+foodStamps <- cleanACS(foodStamps)
 
-# Education ---------------------------------------------------------------
+acs <- left_join(acs, foodStamps, by = "id")
 
-education <- read_csv("../Raw Data/ACSST1Y2018.S1501_data_with_overlays_2020-04-24T120238.csv",
-                      skip = 1)
-education <- cleanACS(education)
+# Health Insurance ---------------------------------------------------------------------
 
-acs <- left_join(acs, education, by = "id")
+healthInsurance <- read_csv("../Raw Data/ACSST5Y2018.S2701_data_with_overlays_2020-04-26T232706.csv",
+                       skip = 1)
 
-# Transportation ---------------------------------------------------------------
+healthInsurance <- cleanACS(healthInsurance)
 
-transportation <- read_csv("../Raw Data/ACSST1Y2018.S0801_data_with_overlays_2020-04-24T120332.csv",
-                      skip = 1)
-transportation <- cleanACS(transportation)
+acs <- left_join(acs, healthInsurance, by = "id")
 
-acs <- left_join(acs, transportation, by = "id")
+# Employment ---------------------------------------------------------------------
 
-# Employement ---------------------------------------------------------------
+employment <- read_csv("../Raw Data/ACSST5Y2018.S2407_data_with_overlays_2020-04-26T232937.csv",
+                            skip = 1)
 
-employement <- read_csv("../Raw Data/ACSST1Y2018.S2301_data_with_overlays_2020-04-24T120418.csv",
-                           skip = 1)
-employement <- cleanACS(employement)
+employment <- cleanACS(employment)
 
-acs <- left_join(acs, employement, by = "id")
+acs <- left_join(acs, employment, by = "id")
 
-# Occupation ---------------------------------------------------------------
+# Commute ---------------------------------------------------------------------
 
-occupation <- read_csv("../Raw Data/ACSST1Y2018.S2411_data_with_overlays_2020-04-24T120502.csv",
-                        skip = 1)
-occupation <- cleanACS(occupation)
+commute <- read_csv("../Raw Data/ACSST5Y2018.S0802_data_with_overlays_2020-04-26T233517.csv",
+                       skip = 1)
 
-acs <- left_join(acs, occupation, by = "id")
+commute <- cleanACS(commute)
 
-# Income ---------------------------------------------------------------
+acs <- left_join(acs, commute, by = "id")
 
-income <- read_csv("../Raw Data/ACSST1Y2018.S1901_data_with_overlays_2020-04-24T120618.csv",
-                   skip = 1)
-income <- cleanACS(income)
+# Housing Traits ---------------------------------------------------------------------
 
-acs <- left_join(acs, income, by = "id")
-
-# Poverty ---------------------------------------------------------------
-
-poverty <- read_csv("../Raw Data/ACSST1Y2018.S1701_data_with_overlays_2020-04-24T120714.csv",
-                   skip = 1)
-poverty <- cleanACS(poverty)
-
-acs <- left_join(acs, poverty, by = "id")
-
-# Foodstamps ---------------------------------------------------------------
-
-foodstamps <- read_csv("../Raw Data/ACSST1Y2018.S2201_data_with_overlays_2020-04-24T120755.csv",
+housing <- read_csv("../Raw Data/ACSST5Y2018.S2504_data_with_overlays_2020-04-26T233740.csv",
                     skip = 1)
-foodstamps <- cleanACS(foodstamps)
 
-acs <- left_join(acs, foodstamps, by = "id")
+housing <- cleanACS(housing)
 
-# Household ---------------------------------------------------------------
-
-household <- read_csv("../Raw Data/ACSST1Y2018.S2501_data_with_overlays_2020-04-24T120833.csv",
-                       skip = 1)
-household <- cleanACS(household)
-
-acs <- left_join(acs, household, by = "id")
-
-write_csv(acs, "ACS.csv")
+acs <- left_join(acs, housing, by = "id")
