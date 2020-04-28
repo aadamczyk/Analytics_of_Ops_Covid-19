@@ -13,6 +13,16 @@ cleanACS <- function(df) {
 
 age <- read_csv("../Raw Data/ACSST5Y2018.S0101_data_with_overlays_2020-04-26T231254.csv",
                        skip = 1)
+
+ageMeta <- read_csv("../Raw Data/Metadata/ACSST5Y2018.S0101_metadata_2020-04-26T231254.csv", col_names = F)
+
+ageMeta[3][is.na(ageMeta[3])] <- 0
+
+age <- age[,ageMeta$X3 == 1]
+ageMeta <- filter(ageMeta, ageMeta$X3 == 1)
+
+colnames(age) <- ageMeta$X4
+
 acs <- cleanACS(age)
 
 # Language ---------------------------------------------------------------------
