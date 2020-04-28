@@ -1,91 +1,29 @@
 library(tidyverse)
 
-cleanACS <- function(df) {
-    df %>%
-        select(-starts_with("Margin")) %>%
-        transmute_all(as.numeric) -> temp
-    temp$id <- df$id
-    temp$`Geographic Area Name` <- df$`Geographic Area Name`
-    return(temp)
-}
-
 # Age ---------------------------------------------------------------------
 
 age <- read_csv("../Raw Data/ACSST5Y2018.S0101_data_with_overlays_2020-04-26T231254.csv",
                        skip = 1)
+agenames <- read_csv("../Raw Data/ACSST5Y2018.S0101_data_with_overlays_2020-04-26T231254.csv",
+                     n_max = 1)
+agenames <- colnames(agenames)
 
-ageMeta <- read_csv("../Raw Data/Metadata/ACSST5Y2018.S0101_metadata_2020-04-26T231254.csv", col_names = F)
+ageMeta <- read_csv("../Raw Data/Metadata/ACSST5Y2018.S0101_metadata_2020-04-26T231254.csv",
+                    col_names = F)
 
 ageMeta[3][is.na(ageMeta[3])] <- 0
 
-age <- age[,ageMeta$X3 == 1]
-ageMeta <- filter(ageMeta, ageMeta$X3 == 1)
+ageMeta %>%
+    filter(X3 == 1) %>%
+    select(X1) -> desiredColumns
 
-colnames(age) <- ageMeta$X4
+age <- age[,agenames %in% desiredColumns$X1]
+agenames <- agenames[agenames %in% desiredColumns$X1]
+agenames <- as.data.frame(agenames, stringsAsFactors = F)
+agenames <- left_join(agenames, ageMeta, by = c("agenames" = "X1"))
 
-acs <- cleanACS(age)
+colnames(age) <- agenames$X4
 
-# Language ---------------------------------------------------------------------
+acs <- age
 
-language <- read_csv("../Raw Data/ACSST5Y2018.S1603_data_with_overlays_2020-04-26T231636.csv",
-                skip = 1)
-
-language <- cleanACS(language)
-
-acs <- left_join(acs, language, by = "id")
-
-# Disability ---------------------------------------------------------------------
-
-disability <- read_csv("../Raw Data/ACSST5Y2018.S1810_data_with_overlays_2020-04-26T232305.csv",
-                     skip = 1)
-
-disability <- cleanACS(disability)
-
-acs <- left_join(acs, disability, by = "id")
-
-# Food Stamps ---------------------------------------------------------------------
-
-foodStamps <- read_csv("../Raw Data/ACSST5Y2018.S2201_data_with_overlays_2020-04-26T232507.csv",
-                       skip = 1)
-
-foodStamps <- cleanACS(foodStamps)
-
-acs <- left_join(acs, foodStamps, by = "id")
-
-# Health Insurance ---------------------------------------------------------------------
-
-healthInsurance <- read_csv("../Raw Data/ACSST5Y2018.S2701_data_with_overlays_2020-04-26T232706.csv",
-                       skip = 1)
-
-healthInsurance <- cleanACS(healthInsurance)
-
-acs <- left_join(acs, healthInsurance, by = "id")
-
-# Employment ---------------------------------------------------------------------
-
-employment <- read_csv("../Raw Data/ACSST5Y2018.S2407_data_with_overlays_2020-04-26T232937.csv",
-                            skip = 1)
-
-employment <- cleanACS(employment)
-
-acs <- left_join(acs, employment, by = "id")
-
-# Commute ---------------------------------------------------------------------
-
-commute <- read_csv("../Raw Data/ACSST5Y2018.S0802_data_with_overlays_2020-04-26T233517.csv",
-                       skip = 1)
-
-commute <- cleanACS(commute)
-
-acs <- left_join(acs, commute, by = "id")
-
-# Housing Traits ---------------------------------------------------------------------
-
-housing <- read_csv("../Raw Data/ACSST5Y2018.S2504_data_with_overlays_2020-04-26T233740.csv",
-                    skip = 1)
-
-housing <- cleanACS(housing)
-
-acs <- left_join(acs, housing, by = "id")
-
-write.csv(acs, file = "ACS.csv", row.names = F)
+write_csv(x = acs, path = "ACS.csv")
