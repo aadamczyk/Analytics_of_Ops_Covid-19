@@ -28,12 +28,17 @@ NYTimes Data
 
 The data about languages spoken at home is only relevant for the population over
 five years old. When you calculate these fractions, divide by Pop5Up.
+
 The data about educational attainment only applies for the population above 25.
 Use Pop25Up to measure those fractions.
+
 Household income statistics are based on the Household population. Use
 TotalHousePopulation when calculating those statistics.
+
 Employment industry statistics are based on the civilian employed population 16 years and
 older, TotCivEmpPop16Up
+
 Occupation statistics are based on workers 16 and Up, TotalWorkers16Up.
+
 Housing data is based on the number of total occupied housing units,
 TotalOccupiedHousingUnits

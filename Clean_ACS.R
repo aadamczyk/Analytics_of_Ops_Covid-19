@@ -1,10 +1,10 @@
 library(tidyverse)
 
-data <- "../Raw Data/ACSST5Y2018.S0802_data_with_overlays_2020-04-26T233517.csv"
-metadata <- "../Raw Data/Metadata/ACSST5Y2018.S0802_metadata_2020-04-26T233517.csv"
+data <- "../Raw Data/ACSST5Y2018.S1810_data_with_overlays_2020-04-26T232305.csv"
+metadata <- "../Raw Data/Metadata/ACSST5Y2018.S1810_metadata_2020-04-26T232305.csv"
 
 cleanACS <- function(data, metadata){
-    df <- read_csv(data, skip = 2, col_names = F, guess_max = 3000)
+    df <- read_csv(data, skip = 2, col_names = F, guess_max = 3215, na = "(X)")
     dfNames <- read_csv(data, n_max = 1)
     dfNames <- colnames(dfNames)
 
@@ -43,8 +43,6 @@ ageMeta <- "../Raw Data/Metadata/ACSST5Y2018.S0101_metadata_2020-04-26T231254.cs
 age <- cleanACS(data = age, metadata = ageMeta)
 
 acs <- age
-
-write_csv(x = acs, path = "ACS.csv")
 
 # Language ---------------------------------------------------------------------
 
