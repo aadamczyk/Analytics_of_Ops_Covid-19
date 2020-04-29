@@ -1,0 +1,65 @@
+---
+title: "Covid EDA"
+author: "Alex Adamczyk"
+date: "4/29/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries}
+library(tidyverse)
+library(rpart)
+library(rpart.plot)
+```
+
+```{r loadData}
+data <- read_csv("nyt_acs_dma.csv")
+```
+
+Since the ACS data doesn't have a time series component, it doesn't make sense
+to look at how it varies over time. Instead, we'll aggregate up by DMA.
+
+```{r aggregateToDMA}
+data %>%
+    group_by(DMA) %>%
+    summarise_at(vars(2:3), sum) -> data_dma
+
+data %>%
+    group_by(DMA) %>%
+    summarise_at(vars(5:94), mean) -> data_dma_acs
+
+data_dma <- left_join(data_dma, data_dma_acs, by = "DMA")
+
+data_dma %>%
+    rename(TotalCases = `Total Cases`, TotalDeaths = `Total Deaths`) -> data_dma
+```
+
+To keep the EDA from looking into the future, we'll split between train and test
+sets.
+
+```{r trainTestSplit}
+set.seed(15071)
+train.obs <- sort(sample(seq_len(nrow(data_dma)), 0.7*nrow(data_dma)))
+train <- data_dma[train.obs,]
+test <- data_dma[-train.obs,]
+```
+
+Since there are so many variables, we'll build a simple CART model to see which
+variables from ACS are predictive of cases and deaths.
+
+```{r cartEDA}
+## Predict Number of Cases
+edaCARTCases <- rpart(TotalCases ~ . - DMA - TotalDeaths, data = train, cp = .00001)
+rpart.plot(edaCARTCases, digits = 0, varlen = 0, faclen = 0)
+
+## Predict Number of Deaths
+edaCARTDeaths <- rpart(TotalDeaths ~ . - DMA, data = train, cp = .0000001)
+rpart.plot(edaCARTDeaths, digits = 0, varlen = 0, faclen = 0)
+
+## Predict Number of Deaths, Without Knowing Case Numbers
+edaCARTDeaths2 <- rpart(TotalDeaths ~ . - DMA - TotalCases, data = train, cp = .000001)
+rpart.plot(edaCARTDeaths2, digits = 0, varlen = 0, faclen = 0)
+```
