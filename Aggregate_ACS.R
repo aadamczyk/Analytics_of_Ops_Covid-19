@@ -211,3 +211,34 @@ acs_dma %>%
 acs_dma %>%
     group_by(DMA) %>%
     summarise_all(list(sum = sum)) -> acs_dma
+
+
+scaleDivision <- function(x, y) (x/y)
+acs_dma %>%
+    mutate_at(vars(starts_with("TotalPop")),
+                 scaleDivision, y = acs_dma$TotPop_sum) %>%
+    mutate_at(vars(starts_with("Pop5Up")),
+              scaleDivision, y = acs_dma$Pop5Up_sum) %>%
+    select(-Pop5Up_sum) %>%
+    mutate_at(vars(starts_with("Pop25Up")),
+              scaleDivision, y = acs_dma$Pop25Up_sum) %>%
+    select(-Pop25Up_sum) %>%
+    mutate_at(vars(starts_with("TotalCivPop")),
+              scaleDivision, y = acs_dma$TotalCivNonInstiPop_sum) %>%
+    mutate_at(vars(starts_with("TotalCivIncome")),
+              scaleDivision, y = acs_dma$TotalCivNonInstiPop_sum) %>%
+    mutate_at(vars(starts_with("Houses")),
+              scaleDivision, y = acs_dma$TotalHouseholds_sum) %>%
+    mutate_at(vars(starts_with("TotalCivNonInstiUnInsured")),
+              scaleDivision, y = acs_dma$TotalCivNonInstiPop_sum) %>%
+    mutate_at(vars(starts_with("TotEmp")),
+              scaleDivision, y = acs_dma$TotCivEmpPop16Up_sum) %>%
+    mutate_at(vars(starts_with("TotWorker")),
+              scaleDivision, y = acs_dma$TotalWorkers16Up_sum) %>%
+    mutate_at(vars(starts_with("Housing")),
+              scaleDivision, y = acs_dma$TotalOccupiedHousingUnits_sum) %>%
+    select(-c(TotalHouseholds_sum, TotalCivNonInstiPop_sum,
+              TotCivEmpPop16Up_sum, TotalWorkers16Up_sum,
+              TotalOccupiedHousingUnits_sum, TotalHousePopulation_sum))-> acs_dma
+
+write_csv(acs_dma, "acs_dma_final.csv")
