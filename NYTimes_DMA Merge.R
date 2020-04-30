@@ -126,47 +126,97 @@ head(merged)
 nytimes_dma<- unite(merged, date_DMA, c(date,DMA), sep = "_", remove=FALSE)
 head(nytimes_dma, 5)
 
-##Aggregate data and sum cases/deaths
-
+##Aggregate data and sum cases
 nytimes_dma_Totalcases<- aggregate(nytimes_dma$cases, 
-                          by=list(Category=nytimes_dma$date_DMA), FUN=sum)
-colnames(nytimes_dma_Totalcases)[2] <- "Total Cases"
-                           
-nytimes_dma_Totaldeaths<-aggregate(nytimes_dma$deaths, 
-                  by=list(Category=nytimes_dma$date_DMA), FUN=sum)
-colnames(nytimes_dma_Totaldeaths)[2] <- "Total Deaths"
+                                   by=list(nytimes_dma$date_DMA, nytimes_dma$date, nytimes_dma$DMA), FUN=sum)
+colnames(nytimes_dma_Totalcases)[3] <- "DMA"
+colnames(nytimes_dma_Totalcases)[2]<- "Date"
+colnames(nytimes_dma_Totalcases)[4]<- "Total_Cases"
+head(nytimes_dma_Totalcases,5)
 
-merged2 <- left_join(nytimes_dma_Totalcases, nytimes_dma_Totaldeaths, by = c("Category" = "Category"))
+##sum death
+nytimes_dma_Totaldeaths<- aggregate(nytimes_dma$deaths, 
+                                      by=list(nytimes_dma$date_DMA), FUN=sum)
+colnames(nytimes_dma_Totaldeaths)[2] <- "Total_Deaths"
+#Merge NYTimes/DMA
+nytimes_dma2 <- left_join(nytimes_dma_Totalcases, 
+                             nytimes_dma_Totaldeaths, by = c("Group.1" = "Group.1"))
+##Change to New Cases per day
+head(nytimes_dma2) 
+nytimes_dma3<- slide(nytimes_dma2, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                     NewVar = "CaseLagDay-1", slideBy = -1)
+nytimes_dma3$NewCasesPerDay = nytimes_dma3$Total_Cases - nytimes_dma3$'CaseLagDay-1'
+
+##Change to New Deaths per day
+nytimes_dma4<- slide(nytimes_dma3, Var = "Total_Deaths", GroupVar = "DMA", TimeVar = "Date", 
+                      NewVar = "DeathLagDay-1", slideBy = -1)
+nytimes_dma4$NewDeathsPerDay = nytimes_dma4$Total_Deaths - nytimes_dma4$'DeathLagDay-1'
 
 
+##Adding Case Lags -14 to 14
+nytimes_dma_lag<- slide(nytimes_dma4, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                     NewVar = "CaseLagDay-2", slideBy = -2)
+nytimes_dma_lag3<- slide(nytimes_dma_lag, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                        NewVar = "CaseLagDay-3", slideBy = -3)
+nytimes_dma_lag4<- slide(nytimes_dma_lag3, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                        NewVar = "CaseLagDay-4", slideBy = -4)
+nytimes_dma_lag5<- slide(nytimes_dma_lag4, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                    NewVar = "CaseLagDay-5", slideBy = -5)
+nytimes_dma_lag6<- slide(nytimes_dma_lag5, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                    NewVar = "CaseLagDay-6", slideBy = -6)
+nytimes_dma_lag7<- slide(nytimes_dma_lag6, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                     NewVar = "CaseLagDay-7", slideBy = -7)
+nytimes_dma_lag8<- slide(nytimes_dma_lag7, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                     NewVar = "CaseLagDay-8", slideBy = -8)
+nytimes_dma_lag9<- slide(nytimes_dma_lag8, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                     NewVar = "CaseLagDay-9", slideBy = -9)
+nytimes_dma_lag10<- slide(nytimes_dma_lag9, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                     NewVar = "CaseLagDay-10", slideBy = -10)
+nytimes_dma_lag11<- slide(nytimes_dma_lag10, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                     NewVar = "CaseLagDay-11", slideBy = -11)
+nytimes_dma_lag12<- slide(nytimes_dma_lag11, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                     NewVar = "CaseLagDay-12", slideBy = -12)
+nytimes_dma_lag13<- slide(nytimes_dma_lag12, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                     NewVar = "CaseLagDay-13", slideBy = -13)
+nytimes_dma_lag14<- slide(nytimes_dma_lag13, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                     NewVar = "CaseLagDay-14", slideBy = -14)
+##Leading +1 to + 14
+nytimes_dma_lag15<- slide(nytimes_dma_lag14, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                     NewVar = "CaseLagDay+1", slideBy = +1)
+nytimes_dma_lag16<- slide(nytimes_dma_lag15, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                      NewVar = "CaseLagDay+2", slideBy = +2)
+nytimes_dma_lag17<- slide(nytimes_dma_lag16, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                      NewVar = "CaseLagDay+3", slideBy = +3)
+nytimes_dma_lag18<- slide(nytimes_dma_lag17, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                      NewVar = "CaseLagDay+4", slideBy = +4)
+nytimes_dma_lag19<- slide(nytimes_dma_lag18, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                      NewVar = "CaseLagDay+5", slideBy = +5)
+nytimes_dma_lag20<- slide(nytimes_dma_lag19, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                      NewVar = "CaseLagDay+6", slideBy = +6)
+nytimes_dma_lag21<- slide(nytimes_dma_lag20, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                      NewVar = "CaseLagDay+7", slideBy = +7)
+nytimes_dma_lag22<- slide(nytimes_dma_lag21, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                      NewVar = "CaseLagDay+8", slideBy = +8)
+nytimes_dma_lag23<- slide(nytimes_dma_lag22, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                      NewVar = "CaseLagDay+9", slideBy = +9)
+nytimes_dma_lag24<- slide(nytimes_dma_lag23, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                       NewVar = "CaseLagDay+10", slideBy = +10)
+nytimes_dma_lag25<- slide(nytimes_dma_lag24, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                       NewVar = "CaseLagDay+11", slideBy = +11)
+nytimes_dma_lag26<- slide(nytimes_dma_lag25, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                       NewVar = "CaseLagDay+12", slideBy = +12)
+
+nytimes_dma_lag27<- slide(nytimes_dma_lag26, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                       NewVar = "CaseLagDay+13", slideBy = +13)
+nytimes_dma_lag28<- slide(nytimes_dma_lag27, Var = "Total_Cases", GroupVar = "DMA", TimeVar = "Date", 
+                                                       NewVar = "CaseLagDay+14", slideBy = +14)
+                            
 ####END
 
 
 ##save file
 setwd("C:/Users/poay1/Downloads")
-write.csv(merged2,'nytimes_dma_3.csv')
+write.csv(nytimes_dma_lag28,'nytimes_dma_4.csv')
 
 
-##APPENDIX
-#Fix Caps
-##Fix "Prince George's"
-nytimes_county_state$County_State <- 
-  gsub("Prince George's,MD", "Prince George'S,MD",
-       nytimes_county_state$County_State)
-#Fix "city"
-nytimes_county_state$County_State <- 
-  gsub("city", "City",
-       nytimes_county_state$County_State)
 
-##Fix Fond du Lac
-nytimes_county_state$County_State <- 
-  gsub("Fond du Lac,WI","Fond Du Lac,WI",
-       nytimes_county_state$County_State)
-#Fix McCook,SD
-nytimes_county_state$County_State <- 
-  gsub("McCook,SD","Mccook,SD",
-       nytimes_county_state$County_State)
-#Fix Dekalb
-nytimes_county_state$County_State <- 
-  gsub("DeKalb,GA","Dekalb,GA",
-       nytimes_county_state$County_State)
