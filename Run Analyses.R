@@ -23,7 +23,7 @@ final_data$w_workplaces_percent_change_from_baseline[is.na(final_data$w_workplac
 
 final_data <- final_data[!is.na(final_data$TotalPopUnder5_sum),]
 
-model_data <- select(final_data, -c(X, location, geo_code, Inflation.Factor, DMA,
+model_data <- select(final_data, -c(X, geo_code, Inflation.Factor, DMA,
                                     TotalCivPopAmbulatoryDisability_sum, TotalCivPopSelfCareDisability_sum, TotalCivPopIndLivingDisability_sum))
 lag = 1
 lead = 14
@@ -53,6 +53,13 @@ lead = 14
     split = createDataPartition(covid$CaseLeadDay1, p = 0.75, list = FALSE)
     covid.train <- covid[split,]
     covid.test <- covid[-split,]
+
+    #Save and remove geographies to add back on in the end
+    covid.train.geos <- covid.train$location
+    covid.test.geos <- covid.test$location
+
+    covid.train <- select(covid.train, -c(location))
+    covid.test <- select(covid.test, -c(location))
 
     #Train Linear Model
 
@@ -179,5 +186,58 @@ lead = 14
 #4. Interpretation of Results
 
 #4.1 Track Prediction Accuracy
-covid.test.review %>%
 
+#Add back in the locations
+covid.test.review$location <- covid.test.geos
+covid.test.review$date <- as.Date(covid.test.review$date)
+covid.test.review$dateLead14 <- covid.test.review$date + 14
+
+covid.test.review %>%
+  group_by(location) %>%
+  mutate(n = n()) %>%
+  filter(n > 15) -> covid.test.review.common
+
+covid.test.review.common %>%
+  filter(location == "Charleston SC") -> charlestonResults
+
+ggplot() +
+  geom_line(data = charlestonResults,
+             mapping = aes(x = dateLead14, y = CaseLeadDay14, color = "a")) +
+  geom_line(data = charlestonResults,
+            mapping = aes(x = dateLead14, y = Predict, color = "b")) +
+  labs(title = "Predicted Cases in Charleston, SC", x = "Date",
+     y = "Number of Cases") +
+  scale_color_identity(guide = 'legend') +
+  scale_colour_manual(name = 'Color',
+                      values =c('b'='blue','a'='red'),
+                      labels = c('Predicted','Actual'))
+
+covid.test.review.common %>%
+  filter(location == "Lafayette IN") -> lafayetteResults
+
+ggplot() +
+  geom_line(data = lafayetteResults,
+            mapping = aes(x = dateLead14, y = CaseLeadDay14, color = "a")) +
+  geom_line(data = lafayetteResults,
+            mapping = aes(x = dateLead14, y = Predict, color = "b")) +
+  labs(title = "Predicted Cases in Lafayette, IN", x = "Date",
+       y = "Number of Cases") +
+  scale_color_identity(guide = 'legend') +
+  scale_colour_manual(name = 'Color',
+                      values =c('b'='blue','a'='red'),
+                      labels = c('Predicted','Actual'))
+
+covid.test.review.common %>%
+  filter(location == "San Diego CA") -> sanDiegoResults
+
+ggplot() +
+  geom_line(data = sanDiegoResults,
+            mapping = aes(x = dateLead14, y = CaseLeadDay14, color = "a")) +
+  geom_line(data = sanDiegoResults,
+            mapping = aes(x = dateLead14, y = Predict, color = "b")) +
+  labs(title = "Predicted Cases in San Diego, CA", x = "Date",
+       y = "Number of Cases") +
+  scale_color_identity(guide = 'legend') +
+  scale_colour_manual(name = 'Color',
+                      values =c('b'='blue','a'='red'),
+                      labels = c('Predicted','Actual'))
