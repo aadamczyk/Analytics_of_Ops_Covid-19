@@ -23,7 +23,7 @@ final_data$w_workplaces_percent_change_from_baseline[is.na(final_data$w_workplac
 
 final_data <- final_data[!is.na(final_data$TotalPopUnder5_sum),]
 
-model_data <- select(final_data, -c(X, location, geo_code, Inflation.Factor, DMA,
+model_data <- select(final_data, -c(X, geo_code, Inflation.Factor, DMA,
                                     TotalCivPopAmbulatoryDisability_sum, TotalCivPopSelfCareDisability_sum, TotalCivPopIndLivingDisability_sum))
 lag = 1
 lead = 14
@@ -53,6 +53,13 @@ lead = 14
     split = createDataPartition(covid$CaseLeadDay1, p = 0.75, list = FALSE)
     covid.train <- covid[split,]
     covid.test <- covid[-split,]
+
+    #Save and remove geographies to add back on in the end
+    covid.train.geos <- covid.train$location
+    covid.test.geos <- covid.test$location
+
+    covid.train <- select(covid.train, -c(location))
+    covid.test <- select(covid.test, -c(location))
 
     #Train Linear Model
 
@@ -159,10 +166,15 @@ lead = 14
     mat <- xgb.importance(colnames(covid.train), model =xgb.final)
     xgb.plot.importance(mat)
 
+    #Just the top variables
+    xgb.plot.importance(mat, top_n = 16, left_margin = 16, rel_to_first = T)
+
     nodes <- xgb.dump(xgb.final, with_stats = T)
     nodes[1:10]
 
-    covid.test.review <- select(covid.test, c("CaseLeadDay14", "date", "hits", "hits.adj", "New_Cases", "New_Deaths", "Total_Cases", "Total_Deaths"))
+    covid.test.review <- select(covid.test, c("CaseLeadDay14", "date", "hits",
+                                              "hits.adj", "New_Cases", "New_Deaths",
+                                              "Total_Cases", "Total_Deaths"))
 
     covid.test.review$Predict <- preds.xgb.test
 
@@ -170,3 +182,181 @@ lead = 14
 
 #  }
 #}
+
+#4. Interpretation of Results
+
+#4.1 Track Prediction Accuracy
+
+#Add back in the locations
+covid.test.review$location <- covid.test.geos
+covid.test.review$date <- as.Date(covid.test.review$date)
+covid.test.review$dateLead14 <- covid.test.review$date + 14
+
+covid.test.review %>%
+  group_by(location) %>%
+  mutate(n = n()) %>%
+  filter(n > 15) -> covid.test.review.common
+
+covid.test.review.common %>%
+  filter(location == "Charleston SC") -> charlestonResults
+
+ggplot() +
+  geom_line(data = charlestonResults,
+             mapping = aes(x = dateLead14, y = CaseLeadDay14, color = "a")) +
+  geom_line(data = charlestonResults,
+            mapping = aes(x = dateLead14, y = Predict, color = "b")) +
+  labs(title = "Predicted Cases in Charleston, SC", x = "Date",
+     y = "Number of Cases") +
+  scale_color_identity(guide = 'legend') +
+  scale_colour_manual(name = 'Color',
+                      values =c('b'='blue','a'='red'),
+                      labels = c('Predicted','Actual'))
+
+covid.test.review.common %>%
+  filter(location == "Lafayette IN") -> lafayetteResults
+
+ggplot() +
+  geom_line(data = lafayetteResults,
+            mapping = aes(x = dateLead14, y = CaseLeadDay14, color = "a")) +
+  geom_line(data = lafayetteResults,
+            mapping = aes(x = dateLead14, y = Predict, color = "b")) +
+  labs(title = "Predicted Cases in Lafayette, IN", x = "Date",
+       y = "Number of Cases") +
+  scale_color_identity(guide = 'legend') +
+  scale_colour_manual(name = 'Color',
+                      values =c('b'='blue','a'='red'),
+                      labels = c('Predicted','Actual'))
+
+covid.test.review.common %>%
+  filter(location == "San Diego CA") -> sanDiegoResults
+
+ggplot() +
+  geom_line(data = sanDiegoResults,
+            mapping = aes(x = dateLead14, y = CaseLeadDay14, color = "a")) +
+  geom_line(data = sanDiegoResults,
+            mapping = aes(x = dateLead14, y = Predict, color = "b")) +
+  labs(title = "Predicted Cases in San Diego, CA", x = "Date",
+       y = "Number of Cases") +
+  scale_color_identity(guide = 'legend') +
+  scale_colour_manual(name = 'Color',
+                      values =c('b'='blue','a'='red'),
+                      labels = c('Predicted','Actual'))
+
+#5. Train/Test model split by geography
+
+#5.1 Break geographies into train/test sections
+
+locations <- unique(covid$location)
+
+set.seed(144)
+split = sample(locations, length(locations) * .75)
+covid.train <- covid[covid$location %in% split,]
+covid.test <- covid[(covid$location %in% split),]
+
+#Save and remove geographies to add back on in the end
+covid.train.geos <- covid.train$location
+covid.test.geos <- covid.test$location
+
+covid.train <- select(covid.train, -c(location))
+covid.test <- select(covid.test, -c(location))
+
+set.seed(15071)
+
+x.train=model.matrix(CaseLeadDay14~. - date, data=covid.train)
+y.train= covid.train$CaseLeadDay14
+x.test=model.matrix(CaseLeadDay14~. - date, data=covid.test)
+y.test=covid.test$CaseLeadDay14
+
+
+#xGBoost
+
+xgb <- train(y = y.train,
+             x = x.train,
+             method = "xgbTree",
+             trControl = trainControl(method="cv", number=5))
+
+xgb$bestTune
+
+# R^2 and OSR^2
+xgb.final <- xgb$finalModel
+
+preds.xgb.train <- predict(xgb.final, newdata = x.train)
+preds.xgb.test <- predict(xgb.final, newdata = x.test)
+
+
+r2.xgb <- 1 - sum((preds.xgb.train - y.train)^2)/sum((mean(y.train) - y.train)^2)
+osr.xgb <- 1 - sum((preds.xgb.test - y.test)^2)/sum((mean(y.train) - y.test)^2)
+
+r2.xgb
+osr.xgb
+
+#Feature Importance
+mat <- xgb.importance(colnames(covid.train), model =xgb.final)
+xgb.plot.importance(mat)
+
+#Just the top variables
+xgb.plot.importance(mat, top_n = 16, left_margin = 16, rel_to_first = T)
+
+nodes <- xgb.dump(xgb.final, with_stats = T)
+nodes[1:10]
+
+covid.test.review <- select(covid.test, c("CaseLeadDay14", "date", "hits",
+                                          "hits.adj", "New_Cases", "New_Deaths",
+                                          "Total_Cases", "Total_Deaths"))
+
+covid.test.review$Predict <- preds.xgb.test
+
+covid.test.review$Predict[covid.test.review$Predict < 0] <- 0
+
+#5.2 Track Prediction Accuracy
+
+#Add back in the locations
+covid.test.review$location <- covid.test.geos
+covid.test.review$date <- as.Date(covid.test.review$date)
+covid.test.review$dateLead14 <- covid.test.review$date + 14
+
+covid.test.review %>%
+  filter(location == "Charleston SC") -> charlestonResults
+
+ggplot() +
+  geom_line(data = charlestonResults,
+            mapping = aes(x = dateLead14, y = CaseLeadDay14, color = "a")) +
+  geom_line(data = charlestonResults,
+            mapping = aes(x = dateLead14, y = Predict, color = "b")) +
+  labs(title = "Predicted Cases in Charleston, SC", x = "Date",
+       y = "Number of Cases") +
+  scale_color_identity(guide = 'legend') +
+  scale_colour_manual(name = 'Color',
+                      values =c('b'='blue','a'='red'),
+                      labels = c('Predicted','Actual'))
+
+covid.test.review %>%
+  filter(location == "San Diego CA") -> sanDiegoResults
+
+ggplot() +
+  geom_line(data = sanDiegoResults,
+            mapping = aes(x = dateLead14, y = CaseLeadDay14, color = "a")) +
+  geom_line(data = sanDiegoResults,
+            mapping = aes(x = dateLead14, y = Predict, color = "b")) +
+  labs(title = "Predicted Cases in San Diego, CA", x = "Date",
+       y = "Number of Cases") +
+  scale_color_identity(guide = 'legend') +
+  scale_colour_manual(name = 'Color',
+                      values =c('b'='blue','a'='red'),
+                      labels = c('Predicted','Actual'))
+
+covid.test.review %>%
+  filter(location == "Philadelphia PA") -> PhiladelphiaResults
+
+ggplot() +
+  geom_line(data = PhiladelphiaResults,
+            mapping = aes(x = dateLead14, y = CaseLeadDay14, color = "a")) +
+  geom_line(data = PhiladelphiaResults,
+            mapping = aes(x = dateLead14, y = Predict, color = "b")) +
+  labs(title = "Predicted Cases in Philadelphia, PA", x = "Date",
+       y = "Number of Cases") +
+  scale_color_identity(guide = 'legend') +
+  scale_colour_manual(name = 'Color',
+                      values =c('b'='blue','a'='red'),
+                      labels = c('Predicted','Actual'))
+
