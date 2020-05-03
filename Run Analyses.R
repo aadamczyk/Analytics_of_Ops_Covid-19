@@ -159,10 +159,15 @@ lead = 14
     mat <- xgb.importance(colnames(covid.train), model =xgb.final)
     xgb.plot.importance(mat)
 
+    #Just the top variables
+    xgb.plot.importance(mat, top_n = 16, left_margin = 16, rel_to_first = T)
+
     nodes <- xgb.dump(xgb.final, with_stats = T)
     nodes[1:10]
 
-    covid.test.review <- select(covid.test, c("CaseLeadDay14", "date", "hits", "hits.adj", "New_Cases", "New_Deaths", "Total_Cases", "Total_Deaths"))
+    covid.test.review <- select(covid.test, c("CaseLeadDay14", "date", "hits",
+                                              "hits.adj", "New_Cases", "New_Deaths",
+                                              "Total_Cases", "Total_Deaths"))
 
     covid.test.review$Predict <- preds.xgb.test
 
@@ -170,3 +175,9 @@ lead = 14
 
 #  }
 #}
+
+#4. Interpretation of Results
+
+#4.1 Track Prediction Accuracy
+covid.test.review %>%
+
