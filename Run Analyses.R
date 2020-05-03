@@ -240,7 +240,64 @@ ggplot() +
   scale_color_identity(guide = 'legend') +
   scale_colour_manual(name = 'Color',
                       values =c('b'='blue','a'='red'),
-                      labels = c('Predicted','Actual'))
+                      labels = c('Predicted','Actual')) +
+  theme(legend.position = "bottom")
+
+#Predict future hotspots
+covid %>%
+  filter(date == "2020-03-28") -> covidNext
+
+covidNext.geos <- covidNext$location
+covidNext <- select(covidNext, -c(location))
+
+set.seed(15071)
+#1.1. Preparation of the train and test matrices
+
+x.test.next=model.matrix(CaseLeadDay14~. - date, data=covidNext)
+y.test.next=covidNext$CaseLeadDay14
+
+preds.xgb.next <- predict(xgb.final, newdata = x.test.next)
+
+
+covid.next.review <- select(covidNext, c("CaseLeadDay14", "date", "hits",
+                                          "hits.adj", "New_Cases", "New_Deaths",
+                                          "Total_Cases", "Total_Deaths"))
+
+covid.next.review$Predict <- preds.xgb.next
+
+covid.next.review$Predict[covid.next.review$Predict < 0] <- 0
+
+#Add back in the locations
+covid.next.review$location <- covidNext.geos
+
+#Reorder the locations factor in descending order of cases at the end
+covid.next.review$location <- factor(covid.next.review$location,
+                                     levels = covid.next.review$location[order(covid.next.review$CaseLeadDay14, decreasing = T)])
+ggplot() +
+  geom_point(data = covid.next.review,
+             mapping = aes(x = location, y = CaseLeadDay14, color = "a")) +
+  geom_point(data = covid.next.review,
+             mapping = aes(x = location, y = Predict, color = "p")) +
+  labs(title = "Predicted Cases in Each DMA on April 11th", x = "Location",
+       y = "Number of Cases") +
+  scale_color_identity(guide = 'legend') +
+  scale_colour_manual(name = 'Color',
+                      values =c('p'='blue','a'='red'),
+                      labels = c('Actual','Predicted')) +
+  theme(legend.position = "bottom", axis.text.x = element_blank())
+
+ggplot() +
+  geom_point(data = covid.next.review,
+            mapping = aes(x = location, y = log(CaseLeadDay14+1), color = "a")) +
+  geom_point(data = covid.next.review,
+            mapping = aes(x = location, y = log(Predict+1), color = "p")) +
+  labs(title = "Predicted Cases in Each DMA at End of Dataset", x = "Location",
+       y = "Number of Cases") +
+  scale_color_identity(guide = 'legend') +
+  scale_colour_manual(name = 'Color',
+                      values =c('p'='blue','a'='red'),
+                      labels = c('Actual','Predicted')) +
+  theme(legend.position = "bottom", axis.text.x = element_blank())
 
 #5. Train/Test model split by geography
 
@@ -360,3 +417,119 @@ ggplot() +
                       values =c('b'='blue','a'='red'),
                       labels = c('Predicted','Actual'))
 
+#6. Predict daily deaths
+
+#5.1 Train Test Split
+
+covid <-    model_data %>% drop_na(paste("CaseLagDay.",lag,sep=""))
+covid <-    covid %>% drop_na(paste("CaseLeadDay",lead,sep=""))
+
+for (i in 1:14)
+{
+  covid <- select(covid, -c(paste("CaseLeadDay",i,sep="")))
+
+  if (i != lead){
+    covid <- select(covid, -c(paste("DeathLeadDay",i, sep="")))
+  }
+
+  if (i > lag){
+    covid <- select(covid, -c(paste("CaseLagDay.",i, sep=""),paste("DeathLagDay.",i,sep="")))
+  }
+
+}
+
+set.seed(144)
+split = createDataPartition(covid$DeathLeadDay14, p = 0.75, list = FALSE)
+covid.train <- covid[split,]
+covid.test <- covid[-split,]
+
+#Save and remove geographies to add back on in the end
+covid.train.geos <- covid.train$location
+covid.test.geos <- covid.test$location
+
+covid.train <- select(covid.train, -c(location))
+covid.test <- select(covid.test, -c(location))
+
+set.seed(15071)
+
+x.train=model.matrix(DeathLeadDay14~. - date, data=covid.train)
+y.train= covid.train$DeathLeadDay14
+x.test=model.matrix(DeathLeadDay14~. - date, data=covid.test)
+y.test=covid.test$DeathLeadDay14
+
+#xGBoost
+
+xgb <- train(y = y.train,
+             x = x.train,
+             method = "xgbTree",
+             trControl = trainControl(method="cv", number=5))
+
+xgb$bestTune
+
+# R^2 and OSR^2
+xgb.final <- xgb$finalModel
+
+preds.xgb.train <- predict(xgb.final, newdata = x.train)
+preds.xgb.test <- predict(xgb.final, newdata = x.test)
+
+
+r2.xgb <- 1 - sum((preds.xgb.train - y.train)^2)/sum((mean(y.train) - y.train)^2)
+osr.xgb <- 1 - sum((preds.xgb.test - y.test)^2)/sum((mean(y.train) - y.test)^2)
+
+r2.xgb
+osr.xgb
+
+#Feature Importance
+mat <- xgb.importance(colnames(covid.train), model =xgb.final)
+xgb.plot.importance(mat)
+
+#Just the top variables
+xgb.plot.importance(mat, top_n = 16, left_margin = 16, rel_to_first = T)
+
+nodes <- xgb.dump(xgb.final, with_stats = T)
+nodes[1:10]
+
+covid.test.review <- select(covid.test, c("DeathLeadDay14", "date", "hits",
+                                          "hits.adj", "New_Cases", "New_Deaths",
+                                          "Total_Cases", "Total_Deaths"))
+
+covid.test.review$Predict <- preds.xgb.test
+
+covid.test.review$Predict[covid.test.review$Predict < 0] <- 0
+
+#5.2 Track Prediction Accuracy
+
+#Add back in the locations
+covid.test.review$location <- covid.test.geos
+covid.test.review$date <- as.Date(covid.test.review$date)
+covid.test.review$dateLead14 <- covid.test.review$date + 14
+
+covid.test.review %>%
+  filter(location == "San Diego CA") -> sanDiegoResults
+
+ggplot() +
+  geom_line(data = sanDiegoResults,
+            mapping = aes(x = dateLead14, y = DeathLeadDay14, color = "a")) +
+  geom_line(data = sanDiegoResults,
+            mapping = aes(x = dateLead14, y = Predict, color = "b")) +
+  labs(title = "Predicted Deaths in San Diego, CA", x = "Date",
+       y = "Number of Deaths (per day)") +
+  scale_color_identity(guide = 'legend') +
+  scale_colour_manual(name = 'Color',
+                      values =c('b'='blue','a'='red'),
+                      labels = c('Predicted','Actual'))
+
+covid.test.review %>%
+  filter(location == "Philadelphia PA") -> PhiladelphiaResults
+
+ggplot() +
+  geom_line(data = PhiladelphiaResults,
+            mapping = aes(x = dateLead14, y = DeathLeadDay14, color = "a")) +
+  geom_line(data = PhiladelphiaResults,
+            mapping = aes(x = dateLead14, y = Predict, color = "b")) +
+  labs(title = "Predicted Deaths in Philadelphia, PA", x = "Date",
+       y = "Number of Deaths (per day)") +
+  scale_color_identity(guide = 'legend') +
+  scale_colour_manual(name = 'Color',
+                      values =c('b'='blue','a'='red'),
+                      labels = c('Predicted','Actual'))
