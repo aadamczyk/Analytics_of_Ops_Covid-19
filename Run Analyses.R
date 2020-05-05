@@ -12,6 +12,7 @@ library(tidyverse)
 library(caret)
 library(glmnet)
 library(xgboost)
+library(scales)
 
 setwd("C:/Users/aksha_wdr31m6/OneDrive/Documents/School Docs/Sloan 2019/Spring/15.071 Analytics Edge/Group Project/COVID19")
 
@@ -242,6 +243,46 @@ ggplot() +
                       values =c('b'='blue','a'='red'),
                       labels = c('Predicted','Actual')) +
   theme(legend.position = "bottom")
+
+ggplot(data = covid.test.review, mapping = aes(x = Predict, y = CaseLeadDay14)) +
+  geom_point(alpha = .25) +
+  geom_abline(slope = 1, color = "blue") +
+  labs(title = "Model Accuracy", x = "Predicted Cases", y = "Actual Cases") +
+  coord_cartesian(xlim = c(0, 15000), ylim = c(0, 15000))
+
+ggplot(data = covid.test.review,
+       mapping = aes(x = log(Predict + 1), y = log(CaseLeadDay14 + 1))) +
+  geom_point(alpha = .25) +
+  geom_abline(slope = 1, color = "blue") +
+  labs(title = "Model Accuracy (Log Transformed)",
+       x = "Predicted Cases (Log)",
+       y = "Actual Cases (Log)") +
+  coord_cartesian(xlim = c(0, log(15000)), ylim = c(0, log(15000)))
+
+covid.test.review %>%
+  mutate(bucket = cut(CaseLeadDay14,
+                      breaks = c(0, 99, 15000),
+                      labels = c("<100 Cases", "100+ Cases"))) %>%
+  filter(!is.na(bucket)) %>%
+  mutate(residual = CaseLeadDay14 - Predict) %>%
+  mutate(residualPercent = residual / CaseLeadDay14) -> covid.test.review
+
+ggplot(data = covid.test.review, mapping = aes(x = bucket, y = residualPercent)) +
+  geom_violin() +
+  labs(title = "Percent Error By Number of Cases", x = "Number of Cases",
+       y = "Percent Error") +
+  scale_y_continuous(labels = percent) +
+  coord_cartesian(ylim = c(-5, 1))
+
+covid.test.review %>%
+  filter(CaseLeadDay14 > 100) -> covid.test.review.10Plus
+
+ggplot(data = covid.test.review.10Plus, mapping = aes(x = bucket, y = residualPercent)) +
+geom_violin() +
+labs(title = "Percent Error By Number of Cases", x = "Number of Cases",
+     y = "Percent Error") +
+  scale_y_continuous(labels = percent)
+
 
 #Predict future hotspots
 covid %>%
