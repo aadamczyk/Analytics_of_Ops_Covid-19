@@ -107,4 +107,7 @@ housing <- cleanACS(data = housing, metadata = housingMeta)
 
 acs <- left_join(acs, housing, by = "id")
 
+
+# Write to File -----------------------------------------------------------
+
 write.csv(acs, file = "ACS.csv", row.names = F)
