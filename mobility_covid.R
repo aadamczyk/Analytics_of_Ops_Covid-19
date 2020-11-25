@@ -47,6 +47,8 @@ county_mobility$sub_region_2 <- mapply(gsub,"'s","'S",county_mobility$sub_region
 county_mobility$sub_region_2 <- mapply(gsub,"Doã±a","Dona",county_mobility$sub_region_2)
 #Change "Mckean" to "Mc Kean"
 county_mobility$sub_region_2 <- mapply(gsub,"Mckean","Mc Kean",county_mobility$sub_region_2)
+#Captialize susitna
+county_mobility$sub_region_2 <- mapply(gsub,"Matanuska-susitna","Matanuska-Susitna",county_mobility$sub_region_2)
 
 
 #Changes to VA
@@ -127,7 +129,7 @@ unique(merged[is.na(merged$DMA), "County_State"])
 
 merged$id <- paste(merged$date, merged$DMA, sep = "_")
 
-#write.csv(merged, "C:\\Users\\aaron\\Documents\\MIT\\Analytics Edge\\mobility_w_dma.csv")
+write.csv(merged[,-c(4:6)], "mobility_w_dma.csv")
 
 #Removing all NA
 clean_merged <- filter(merged, retail_and_recreation_percent_change_from_baseline != "NA")
@@ -164,22 +166,25 @@ for (ch in cty){
   single_county$grocery_and_pharmacy_percent_change_from_baseline <- na.approx(single_county$grocery_and_pharmacy_percent_change_from_baseline, maxgap = 3, na.rm = F)
   single_county$retail_and_recreation_percent_change_from_baseline <- na.approx(single_county$retail_and_recreation_percent_change_from_baseline, maxgap = 3, na.rm = F)
   single_county$workplaces_percent_change_from_baseline <- na.approx(single_county$workplaces_percent_change_from_baseline, maxgap = 3, na.rm = F)
+  single_county$transit_stations_percent_change_from_baseline <- na.approx(single_county$transit_stations_percent_change_from_baseline, maxgap = 3, na.rm = F)
+  single_county$parks_percent_change_from_baseline <- na.approx(single_county$parks_percent_change_from_baseline, maxgap = 3, na.rm = F)
   int_merged[which(int_merged$County_State == ch),] <- single_county
   }
 
-merged_clean <- int_merged[,-c(7,8,10)]
+merged_clean <- select(int_merged,c(country_region_code,country_region,County_State,date,retail_and_recreation_percent_change_from_baseline,grocery_and_pharmacy_percent_change_from_baseline,workplaces_percent_change_from_baseline,DMA,id))
+#merged_clean <- int_merged[,-c("transit_stations_percent_change_from_baseline","parks_percent_change_from_baseline","residential_percent_change_from_baseline")]
 merged_clean <- filter(merged_clean, retail_and_recreation_percent_change_from_baseline != "NA")
 merged_clean <- filter(merged_clean, grocery_and_pharmacy_percent_change_from_baseline != "NA")
 merged_clean <- filter(merged_clean, workplaces_percent_change_from_baseline != "NA")
 merged_clean <- filter(merged_clean, merged_clean$DMA != "NA")
 
 #the categories with the most NA's are parks, transit stations, residential
-sum(is.na(int_merged$retail_and_recreation_percent_change_from_baseline))
-sum(is.na(int_merged$grocery_and_pharmacy_percent_change_from_baseline))
-sum(is.na(int_merged$parks_percent_change_from_baseline))
-sum(is.na(int_merged$transit_stations_percent_change_from_baseline))
-sum(is.na(int_merged$workplaces_percent_change_from_baseline))
-sum(is.na(int_merged$residential_percent_change_from_baseline))
+sum(is.na(int_merged$retail_and_recreation_percent_change_from_baseline))/nrow(int_merged)
+sum(is.na(int_merged$grocery_and_pharmacy_percent_change_from_baseline))/nrow(int_merged)
+sum(is.na(int_merged$parks_percent_change_from_baseline))/nrow(int_merged)
+sum(is.na(int_merged$transit_stations_percent_change_from_baseline))/nrow(int_merged)
+sum(is.na(int_merged$workplaces_percent_change_from_baseline))/nrow(int_merged)
+sum(is.na(int_merged$residential_percent_change_from_baseline))/nrow(int_merged)
   
 
 #remove dashes from date
@@ -189,7 +194,7 @@ merged_clean$id <- paste(merged_clean$date, merged_clean$DMA, sep = "_")
 
 
 #This file has removed 3 of the locations(parks,transit stations, residential) and interpolated in the others
-write.csv(merged_clean, "C:\\Users\\aaron\\Documents\\MIT\\Analytics Edge\\mobility_w_dma_clean.csv")
+write.csv(merged_clean, "mobility_w_dma_clean.csv")
 
   
 #Aggregate up to DMA level with using weighted average of population
@@ -210,7 +215,7 @@ acs.pop$State <- state.abb[match(acs.pop$State,state.name)]
 
 acs.pop <- unite(acs.pop, County_State, c(County,State), sep = ",", remove=TRUE)
 
-acs.pop <- acs.pop[,c(3,34)]
+acs.pop <- select(acs.pop,TotPop,County_State)
 
 
 #Changes to ACS
@@ -269,26 +274,28 @@ merged_plus_pop
 unique(merged_plus_pop[is.na(merged_plus_pop$TotalPop), "County_State"])
 
 #This file adds the population to the mobility and dma file
-write.csv(merged_plus_pop, "C:\\Users\\aaron\\Documents\\MIT\\Analytics Edge\\mobility_dma_pop.csv")
+write.csv(merged_plus_pop, "mobility_dma_pop.csv")
 
 ##################################
 #Aggregate mobility categories by id (date_DMA)
 ##################################
 library(data.table)
-merged_pop <- merged_plus_pop[,c(5,6,7,9,10)]
-merged_pop <- merged_pop[c("id","retail_and_recreation_percent_change_from_baseline","grocery_and_pharmacy_percent_change_from_baseline","workplaces_percent_change_from_baseline","TotalPop")]
 
-agg_mobility <- aggregate(merged_pop, by = list(merged_pop$id), FUN = weighted.mean, w = merged_pop$TotalPop)
+#merged_pop <- merged_plus_pop[,c(5,6,7,9,10)]
+#merged_pop <- merged_pop[c("id","retail_and_recreation_percent_change_from_baseline","grocery_and_pharmacy_percent_change_from_baseline","workplaces_percent_change_from_baseline","TotalPop")]
 
-ag_mobility <- data.table(merged_pop)
+#agg_mobility <- aggregate(merged_pop, by = list(merged_pop$id), FUN = weighted.mean, w = list(merged_pop$TotPop))
 
-retail_weighted <-ag_mobility[,list(w_retail_and_recreation_percent_change_from_baseline = weighted.mean(retail_and_recreation_percent_change_from_baseline,TotalPop)),by=id]
-grocery_weighted <-ag_mobility[,list(w_grocery_and_pharmacy_percent_change_from_baseline = weighted.mean(grocery_and_pharmacy_percent_change_from_baseline,TotalPop)),by=id]
-work_weighted <-ag_mobility[,list(w_workplaces_percent_change_from_baseline = weighted.mean(workplaces_percent_change_from_baseline,TotalPop)),by=id]
+ag_mobility <- data.table(merged_plus_pop)
+
+retail_weighted <-ag_mobility[,list(w_retail_and_recreation_percent_change_from_baseline = weighted.mean(retail_and_recreation_percent_change_from_baseline,TotPop)),by=id]
+grocery_weighted <-ag_mobility[,list(w_grocery_and_pharmacy_percent_change_from_baseline = weighted.mean(grocery_and_pharmacy_percent_change_from_baseline,TotPop)),by=id]
+work_weighted <-ag_mobility[,list(w_workplaces_percent_change_from_baseline = weighted.mean(workplaces_percent_change_from_baseline,TotPop)),by=id]
 
 mobility_agg <- left_join(retail_weighted, grocery_weighted, by = c("id" = "id"))
 mobility_agg <- left_join(mobility_agg, work_weighted, by = c("id" = "id"))
 
+
 #this is the mobility data aggregated up to the dma level using population as a weighted mean
-write.csv(mobility_agg, "C:\\Users\\aaron\\Documents\\MIT\\Analytics Edge\\mobility_agg.csv")
+write.csv(mobility_agg, "mobility_agg.csv")
 
