@@ -12,33 +12,44 @@ rm(list = ls())
 library(gtrendsR)
 library(Stack)
 library(stats)
-
+library(readr)
 
 #1. Download Base Datasets
 
 #1.1. Download and Clean List of Geos
 
-data("countries")
-USDMA <- countries[c(122636:122845),]
-USDMAcode <- USDMA$sub_code
-
+dmas <- read_csv("raw_data/dmaList.csv")
 
 #2. Download Queries for Every DMA
 
-OverTimeDMA <- as.data.frame(NULL)
-for (i in 1:length(USDMAcode))
-  {
+source("gtrendsR.R")
 
-query1 <- gtrends(keyword = "covid symptoms", time = "2020-01-01 2020-04-30",
-              gprop = "web", geo= USDMAcode[i],
-              category = 0, hl = "en-US", low_search_volume = TRUE,
-              tz = 0, onlyInterest = FALSE)
+OverTimeDMA1 <- as.data.frame(NULL)
+for (i in 1:nrow(dmas)){
+    query1 <- gtrends(keyword = "covid symptoms", time = "2020-01-21 2020-6-20",
+                  gprop = "web", geo= dmas[[1]][i],
+                  category = 0, low_search_volume = TRUE,
+                  tz = 0, onlyInterest = FALSE)
 
-  extract <- query1$interest_over_time
-  extract$geo_code <- USDMAcode[i]
+    extract <- query1$interest_over_time
+    extract$geo_code <- dmas[[1]][i]
 
-OverTimeDMA <- rbind(OverTimeDMA, extract)
+    OverTimeDMA1 <- rbind(OverTimeDMA1, extract)
+    print(i)
+}
 
+OverTimeDMA2 <- as.data.frame(NULL)
+for (i in 1:nrow(dmas)){
+    query1 <- gtrends(keyword = "covid symptoms", time = "2020-05-20 2020-10-09",
+                      gprop = "web", geo= dmas[[1]][i],
+                      category = 0, low_search_volume = TRUE,
+                      tz = 0, onlyInterest = FALSE)
+
+    extract <- query1$interest_over_time
+    extract$geo_code <- dmas[[1]][i]
+
+    OverTimeDMA2 <- rbind(OverTimeDMA2, extract)
+    print(i)
 }
 
 #3. Download Comparison Across DMAs
@@ -54,7 +65,7 @@ AcrossDMA <- query2$interest_by_dma
 
 USDMA$location.clean <- gsub(",", "", USDMA$name)
 USDMA[192, c("location.clean")] = "Norfolk-Portsmouth-Newport News VA"
-USDMA[52, c("location.clean")] = "Davenport IA-Rock Island-Moline IL"   
+USDMA[52, c("location.clean")] = "Davenport IA-Rock Island-Moline IL"
 USDMA[50, c("location.clean")] = "Champaign & Springfield-Decatur IL"
 
 AcrossDMA$location.clean <- gsub(",", "", AcrossDMA$location)
@@ -64,14 +75,14 @@ AcrossDMA <- merge(AcrossDMA, USDMA, by.x = "location.clean", by.y = "location.c
 
 #4. ReScale Data
 
-#4.1 Create Scale Factor Across DMAs 
+#4.1 Create Scale Factor Across DMAs
 AcrossDMA$Factor <- AcrossDMA$hits/100
 
 #4.2 Create Aggregate Sums of Daily Counts
 
 Countacrossdays <- aggregate(x = OverTimeDMA$hits, by=list(OverTimeDMA$geo_code), FUN=sum)
 
-#4.3. Create an Inflation Factor that matches aggregate sum of fractional searches with normalized daily fractions 
+#4.3. Create an Inflation Factor that matches aggregate sum of fractional searches with normalized daily fractions
 CountFactor <- merge(Countacrossdays, AcrossDMA[, c("sub_code", "Factor")], by.x = "Group.1", by.y = "sub_code", all.x = TRUE)
 
 CountFactor$Numerator <- CountFactor$Factor*CountFactor[which.max(CountFactor$Factor),"x"]
