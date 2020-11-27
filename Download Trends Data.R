@@ -97,7 +97,7 @@ OverTimeDMA <- rbind(OverTimeDMA1, OverTimeDMA2)
 
 #3. Download Comparison Across DMAs
 
-query2 <- gtrends(keyword = "covid symptoms", time = "2020-01-01 2020-04-30",
+query2 <- gtrends(keyword = "covid symptoms", time = "2020-01-01 2020-10-09",
                   gprop = "web", geo= "US",
                   category = 0, hl = "en-US", low_search_volume = TRUE,
                   tz = 0, onlyInterest = FALSE)
@@ -121,15 +121,20 @@ Countacrossdays <- aggregate(x = OverTimeDMA$hits, by=list(OverTimeDMA$geo), FUN
 
 #4.3. Create an Inflation Factor that matches aggregate sum of fractional
 # searches with normalized daily fractions
-CountFactor <- merge(Countacrossdays, AcrossDMA[, c("sub_code", "Factor")],
-                     by.x = "Group.1", by.y = "sub_code", all.x = TRUE)
+CountFactor <- left_join(Countacrossdays, AcrossDMA[, c("geo_code", "Factor")],
+                     by = c("Group.1" = "geo_code"))
 
 CountFactor$Numerator <- CountFactor$Factor*CountFactor[which.max(CountFactor$Factor),"x"]
 CountFactor$Inflation.Factor <- CountFactor$Numerator/CountFactor$x
 
 #4.4 Merge Inflation Factor Into Dataset and Adjust
-OverTimeClean <- merge(OverTimeDMA, CountFactor[,c("Group.1","Inflation.Factor")], by.x = "geo_code", by.y = 'Group.1', all.x = TRUE)
+OverTimeClean <- left_join(OverTimeDMA,
+                           CountFactor[,c("Group.1","Inflation.Factor")],
+                           by = c("geo" = 'Group.1'))
 
 OverTimeClean$hits.adj <- OverTimeClean$hits* OverTimeClean$Inflation.Factor
 
-write.csv(OverTimeClean,"TrendsData.csv", row.names = FALSE)
+OverTimeClean %>%
+    select(date, geo, hits.adj) -> OverTimeClean
+
+write_csv(OverTimeClean, "Data/TrendsData.csv")
