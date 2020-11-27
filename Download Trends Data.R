@@ -106,15 +106,9 @@ AcrossDMA <- query2$interest_by_dma
 
 #3.2. Add in Location Code Into Across DMA Dataset
 
-USDMA$location.clean <- gsub(",", "", USDMA$name)
-USDMA[192, c("location.clean")] = "Norfolk-Portsmouth-Newport News VA"
-USDMA[52, c("location.clean")] = "Davenport IA-Rock Island-Moline IL"
-USDMA[50, c("location.clean")] = "Champaign & Springfield-Decatur IL"
+USDMA <- read_csv("raw_data/dmaLocationCrosswalk.csv")
 
-AcrossDMA$location.clean <- gsub(",", "", AcrossDMA$location)
-AcrossDMA[191, c("location.clean")] <- gsub("[.]", "", AcrossDMA[191,c("location.clean")])
-
-AcrossDMA <- merge(AcrossDMA, USDMA, by.x = "location.clean", by.y = "location.clean", all.x = TRUE)
+AcrossDMA <- left_join(AcrossDMA, USDMA)
 
 #4. ReScale Data
 
@@ -123,10 +117,12 @@ AcrossDMA$Factor <- AcrossDMA$hits/100
 
 #4.2 Create Aggregate Sums of Daily Counts
 
-Countacrossdays <- aggregate(x = OverTimeDMA$hits, by=list(OverTimeDMA$geo_code), FUN=sum)
+Countacrossdays <- aggregate(x = OverTimeDMA$hits, by=list(OverTimeDMA$geo), FUN=sum)
 
-#4.3. Create an Inflation Factor that matches aggregate sum of fractional searches with normalized daily fractions
-CountFactor <- merge(Countacrossdays, AcrossDMA[, c("sub_code", "Factor")], by.x = "Group.1", by.y = "sub_code", all.x = TRUE)
+#4.3. Create an Inflation Factor that matches aggregate sum of fractional
+# searches with normalized daily fractions
+CountFactor <- merge(Countacrossdays, AcrossDMA[, c("sub_code", "Factor")],
+                     by.x = "Group.1", by.y = "sub_code", all.x = TRUE)
 
 CountFactor$Numerator <- CountFactor$Factor*CountFactor[which.max(CountFactor$Factor),"x"]
 CountFactor$Inflation.Factor <- CountFactor$Numerator/CountFactor$x
