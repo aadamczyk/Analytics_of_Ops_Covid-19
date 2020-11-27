@@ -9,10 +9,10 @@
 #0. Clear Environment & Load Packages
 rm(list = ls())
 
-library(gtrendsR)
 library(Stack)
 library(stats)
 library(readr)
+library(dplyr)
 
 #1. Download Base Datasets
 
@@ -23,6 +23,11 @@ dmas <- read_csv("raw_data/dmaList.csv")
 #2. Download Queries for Every DMA
 
 source("gtrendsR.R")
+
+# If there are more than 6 months in the API pull then Google returns data for
+# each week instead of each day. So it's necessary to split this into 2 different
+# pulls. We'll have them overlap by a month so we can try to scale them back
+# together.
 
 OverTimeDMA1 <- as.data.frame(NULL)
 for (i in 1:nrow(dmas)){
@@ -51,6 +56,44 @@ for (i in 1:nrow(dmas)){
     OverTimeDMA2 <- rbind(OverTimeDMA2, extract)
     print(i)
 }
+
+
+# We'll take the overlapping days and estimate the relationship between them.
+# Google introduces noise into each observation, so the ratio can't be perfectly
+# estimated, but the average relationship should be good enough.
+OverTimeDMA1 %>%
+    filter(date >= "2020-05-20" & date <= "2020-06-20") %>%
+    select(date, geo, hits) -> overlap_days_1
+
+OverTimeDMA2 %>%
+    filter(date >= "2020-05-20" & date <= "2020-06-20") %>%
+    select(date, geo, hits) -> overlap_days_2
+
+overlap_days <- left_join(overlap_days_1, overlap_days_2,
+                          by = c("date" = "date", "geo" = "geo"))
+
+overlap_days <- as_tibble(overlap_days)
+
+overlap_days %>%
+    mutate(ratio = hits.y / hits.x) %>%
+    filter(!(ratio == Inf)) %>%
+    group_by(geo) %>%
+    summarise(avg_ratio = mean(ratio, na.rm = T)) -> days_scalar
+
+# Now we'll multiply the first set of days by their respective scalar to
+# transform it to be on the same scale as the second set of dates
+OverTimeDMA1 <- left_join(OverTimeDMA1, days_scalar)
+
+OverTimeDMA1 %>%
+    filter(date < "2020-05-20") %>%
+    mutate(hits = hits * avg_ratio) %>%
+    select(date, geo, hits) -> OverTimeDMA1
+
+# Trim to the same columns
+OverTimeDMA2 %>%
+    select(date, geo, hits) -> OverTimeDMA2
+
+OverTimeDMA <- rbind(OverTimeDMA1, OverTimeDMA2)
 
 #3. Download Comparison Across DMAs
 
