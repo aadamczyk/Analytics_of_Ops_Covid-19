@@ -3,7 +3,7 @@ library(stringr)
 
 acs_dma <- read_csv("acs_dma_final.csv")
 
-nyt_dma <- read_csv("nytimes_dma_3.csv")
+nyt_dma <- read_csv("cleaned_case_mask_data.csv")
 
 nyt_dma %>%
     select(-X1) %>%
