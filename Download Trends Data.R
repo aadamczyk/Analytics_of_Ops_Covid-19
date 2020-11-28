@@ -13,6 +13,7 @@ library(Stack)
 library(stats)
 library(readr)
 library(dplyr)
+library(gtrendsR)
 
 #1. Download Base Datasets
 
@@ -85,7 +86,7 @@ overlap_days %>%
 OverTimeDMA1 <- left_join(OverTimeDMA1, days_scalar)
 
 OverTimeDMA1 %>%
-    filter(date < "2020-05-20") %>%
+    filter(date <= "2020-05-19") %>%
     mutate(hits = hits * avg_ratio) %>%
     select(date, geo, hits) -> OverTimeDMA1
 

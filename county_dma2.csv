@@ -2795,7 +2795,7 @@ VT ,Vermont,Windham                     ,50,25,17070,6,BOSTON (MA) - MANCHESTER 
 VT ,Vermont,Windsor                     ,50,27,23780,91,BURLINGTON (VT) - PLATTSBURGH (NY)                                   
 VA ,Virginia,Accomack                    ,51,1,15790,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Albemarle                   ,51,3,49150,186,CHARLOTTESVILLE (VA)                                                 
-VA ,Virginia,Alexandria city             ,51,510,0,8,"WASHINGTON, DC(HAGRSTWN)                                             "
+VA ,Virginia,Alexandria city             ,51,510,0,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
 VA ,Virginia,Alleghany                   ,51,5,9780,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Amelia                      ,51,7,4320,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Amherst                     ,51,9,12240,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
@@ -2804,45 +2804,45 @@ VA ,Virginia,Arlington                   ,51,13,151280,8,WASHINGTON (DC) - HAGER
 VA ,Virginia,Augusta                     ,51,15,43860,178,HARRISONBURG (VA)                                                    
 VA ,Virginia,Bath                        ,51,17,2060,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Bedford                     ,51,19,27660,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
-VA ,Virginia,Bedford City                ,51,515,0,67,ROANOKE-LYNCHBURG                                                    
+VA ,Virginia,Bedford City                ,51,515,0,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Bland                       ,51,21,2630,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Botetourt                   ,51,23,12240,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Bristol city                ,51,520,0,90,"TRI-CITIES, TN-VA                                                    "
 VA ,Virginia,Brunswick                   ,51,25,6390,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Buchanan                    ,51,27,10000,90,KINGSPORT (TN) - JOHNSON CITY (TN) - BRISTOL (TN)                    
 VA ,Virginia,Buckingham                  ,51,29,5560,59,RICHMOND (VA) - PETERSBURG (VA)                                      
-VA ,Virginia,Buena Vista city            ,51,530,0,67,ROANOKE-LYNCHBURG                                                    
+VA ,Virginia,Buena Vista city            ,51,530,0,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Campbell                    ,51,31,46490,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Caroline                    ,51,33,8260,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Carroll                     ,51,35,15590,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Charles City                ,51,36,2730,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Charlotte                   ,51,37,4890,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
-VA ,Virginia,Charlottesville city        ,51,540,0,186,CHARLOTTESVILLE                                                      
+VA ,Virginia,Charlottesville city        ,51,540,0,186,CHARLOTTESVILLE (VA)                                                 
 VA ,Virginia,Chesapeake city             ,51,550,72330,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Chesterfield                ,51,41,105070,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Clarke                      ,51,43,5120,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
-VA ,Virginia,Clifton Forge City          ,51,560,0,67,ROANOKE-LYNCHBURG                                                    
-VA ,Virginia,Colonial Heights city       ,51,570,0,59,RICHMOND-PETERSBURG                                                  
-VA ,Virginia,Covington city              ,51,580,0,67,ROANOKE-LYNCHBURG                                                    
+VA ,Virginia,Clifton Forge City          ,51,560,0,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
+VA ,Virginia,Colonial Heights city       ,51,570,0,59,RICHMOND (VA) - PETERSBURG (VA)                                      
+VA ,Virginia,Covington city              ,51,580,0,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Craig                       ,51,45,2150,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Culpeper                    ,51,47,12480,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
 VA ,Virginia,Cumberland                  ,51,49,3650,59,RICHMOND (VA) - PETERSBURG (VA)                                      
-VA ,Virginia,Danville city               ,51,590,0,67,ROANOKE-LYNCHBURG                                                    
+VA ,Virginia,Danville city               ,51,590,0,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Dickenson                   ,51,51,6600,90,KINGSPORT (TN) - JOHNSON CITY (TN) - BRISTOL (TN)                    
 VA ,Virginia,Dinwiddie                   ,51,53,22390,59,RICHMOND (VA) - PETERSBURG (VA)                                      
-VA ,Virginia,Emporia city                ,51,595,0,59,RICHMOND-PETERSBURG                                                  
+VA ,Virginia,Emporia city                ,51,595,0,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Essex                       ,51,57,4200,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Fairfax                     ,51,59,374050,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
-VA ,Virginia,Fairfax city                ,51,600,0,8,"WASHINGTON, DC(HAGRSTWN)                                             "
-VA ,Virginia,Falls Church city           ,51,610,0,8,"WASHINGTON, DC(HAGRSTWN)                                             "
+VA ,Virginia,Fairfax city                ,51,600,0,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
+VA ,Virginia,Falls Church city           ,51,610,0,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
 VA ,Virginia,Fauquier                    ,51,61,20130,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
 VA ,Virginia,Floyd                       ,51,63,6000,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Fluvanna                    ,51,65,8030,186,CHARLOTTESVILLE (VA)                                                 
 VA ,Virginia,Franklin                    ,51,67,19600,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
-VA ,Virginia,Franklin city               ,51,620,0,41,NORFOLK-PORTSMTH-NEWPT NWS                                           
+VA ,Virginia,Franklin city               ,51,620,0,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Frederick                   ,51,69,33470,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
-VA ,Virginia,Fredericksburg city         ,51,630,0,8,"WASHINGTON, DC(HAGRSTWN)                                             "
-VA ,Virginia,Galax city                  ,51,640,0,67,ROANOKE-LYNCHBURG                                                    
+VA ,Virginia,Fredericksburg city         ,51,630,0,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
+VA ,Virginia,Galax city                  ,51,640,0,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Giles                       ,51,71,7100,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Gloucester                  ,51,73,13370,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Goochland                   ,51,75,6360,59,RICHMOND (VA) - PETERSBURG (VA)                                      
@@ -2852,11 +2852,11 @@ VA ,Virginia,Greensville                 ,51,81,5870,59,RICHMOND (VA) - PETERSBU
 VA ,Virginia,Halifax                     ,51,83,15130,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Hampton city                ,51,650,54730,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Hanover                     ,51,85,32700,59,RICHMOND (VA) - PETERSBURG (VA)                                      
-VA ,Virginia,Harrisonburg city           ,51,660,0,178,HARRISONBURG                                                         
+VA ,Virginia,Harrisonburg city           ,51,660,0,178,HARRISONBURG (VA)                                                    
 VA ,Virginia,Henrico                     ,51,87,112510,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Henry                       ,51,89,30760,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Highland                    ,51,91,1040,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
-VA ,Virginia,Hopewell city               ,51,670,0,59,RICHMOND-PETERSBURG                                                  
+VA ,Virginia,Hopewell city               ,51,670,0,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Isle of Wight               ,51,93,11680,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,James City                  ,51,95,24060,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,King and Queen              ,51,97,2640,59,RICHMOND (VA) - PETERSBURG (VA)                                      
@@ -2864,15 +2864,15 @@ VA ,Virginia,King George                 ,51,99,6260,8,WASHINGTON (DC) - HAGERST
 VA ,Virginia,King William                ,51,101,5140,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Lancaster                   ,51,103,5000,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Lee                         ,51,105,9700,90,KINGSPORT (TN) - JOHNSON CITY (TN) - BRISTOL (TN)                    
-VA ,Virginia,Lexington city              ,51,678,0,67,ROANOKE-LYNCHBURG                                                    
+VA ,Virginia,Lexington city              ,51,678,0,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Loudoun                     ,51,107,66830,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
 VA ,Virginia,Louisa                      ,51,109,10510,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Lunenburg                   ,51,111,5210,59,RICHMOND (VA) - PETERSBURG (VA)                                      
-VA ,Virginia,Lynchburg city              ,51,680,0,67,ROANOKE-LYNCHBURG                                                    
+VA ,Virginia,Lynchburg city              ,51,680,0,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Madison                     ,51,113,4570,186,CHARLOTTESVILLE (VA)                                                 
-VA ,Virginia,Manassas city               ,51,683,0,8,"WASHINGTON, DC(HAGRSTWN)                                             "
-VA ,Virginia,Manassas Park city          ,51,685,0,8,"WASHINGTON, DC(HAGRSTWN)                                             "
-VA ,Virginia,Martinsville city           ,51,690,0,67,ROANOKE-LYNCHBURG                                                    
+VA ,Virginia,Manassas city               ,51,683,0,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
+VA ,Virginia,Manassas Park city          ,51,685,0,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
+VA ,Virginia,Martinsville city           ,51,690,0,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Mathews                     ,51,115,3910,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Mecklenburg                 ,51,117,13370,29,RALEIGH (NC) - DURHAM (NC) - FAYETTEVILLE (NC)                       
 VA ,Virginia,Middlesex                   ,51,119,4400,59,RICHMOND (VA) - PETERSBURG (VA)                                      
@@ -2883,38 +2883,38 @@ VA ,Virginia,Newport News city           ,51,700,70030,41,NORFOLK (VA) - PORTSMO
 VA ,Virginia,Norfolk city                ,51,710,83200,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Northampton                 ,51,131,5390,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Northumberland              ,51,133,5540,59,RICHMOND (VA) - PETERSBURG (VA)                                      
-VA ,Virginia,Norton city                 ,51,720,0,41,NORFOLK-PORTSMTH-NEWPT NWS                                           
+VA ,Virginia,Norton city                 ,51,720,0,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Nottoway                    ,51,135,5710,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Orange                      ,51,137,10310,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Page                        ,51,139,9350,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
 VA ,Virginia,Patrick                     ,51,141,8400,46,GREENSBORO (NC) - HIGH POINT (NC) - WINSTON SALEM (NC)               
 VA ,Virginia,Petersburg city             ,51,730,0,90,"TRI-CITIES, TN-VA                                                    "
 VA ,Virginia,Pittsylvania                ,51,143,45840,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
-VA ,Virginia,Poquoson city               ,51,735,0,59,RICHMOND-PETERSBURG                                                  
+VA ,Virginia,Poquoson city               ,51,735,0,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Portsmouth city             ,51,740,37660,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Powhatan                    ,51,145,7880,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Prince Edward               ,51,147,6680,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Prince George               ,51,149,20150,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Prince William              ,51,153,115940,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
 VA ,Virginia,Pulaski                     ,51,155,14630,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
-VA ,Virginia,Radford city                ,51,750,0,41,NORFOLK-PORTSMTH-NEWPT NWS                                           
+VA ,Virginia,Radford city                ,51,750,0,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Rappahannock                ,51,157,2580,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
 VA ,Virginia,Richmond                    ,51,159,3010,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Richmond city               ,51,760,83810,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Roanoke                     ,51,161,87660,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
-VA ,Virginia,Roanoke city                ,51,770,0,67,ROANOKE-LYNCHBURG                                                    
+VA ,Virginia,Roanoke city                ,51,770,0,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Rockbridge                  ,51,163,13360,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Rockingham                  ,51,165,39330,178,HARRISONBURG (VA)                                                    
 VA ,Virginia,Russell                     ,51,167,11920,90,KINGSPORT (TN) - JOHNSON CITY (TN) - BRISTOL (TN)                    
-VA ,Virginia,Salem city                  ,51,775,0,67,ROANOKE-LYNCHBURG                                                    
+VA ,Virginia,Salem city                  ,51,775,0,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Scott                       ,51,169,9880,90,KINGSPORT (TN) - JOHNSON CITY (TN) - BRISTOL (TN)                    
 VA ,Virginia,Shenandoah                  ,51,171,14600,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
 VA ,Virginia,Smyth                       ,51,173,13770,90,KINGSPORT (TN) - JOHNSON CITY (TN) - BRISTOL (TN)                    
-VA ,Virginia,South Boston City           ,51,780,0,67,ROANOKE-LYNCHBURG                                                    
+VA ,Virginia,South Boston City           ,51,780,0,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Southampton                 ,51,175,9720,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Spotsylvania                ,51,177,42210,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
 VA ,Virginia,Stafford                    ,51,179,31990,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
-VA ,Virginia,Staunton city               ,51,790,0,178,HARRISONBURG                                                         
+VA ,Virginia,Staunton city               ,51,790,0,178,HARRISONBURG (VA)                                                    
 VA ,Virginia,Suffolk city                ,51,800,24080,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Surry                       ,51,181,2640,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Sussex                      ,51,183,4150,59,RICHMOND (VA) - PETERSBURG (VA)                                      
@@ -2922,10 +2922,10 @@ VA ,Virginia,Tazewell                    ,51,185,18090,149,BLUEFIELD (WV) - BECK
 VA ,Virginia,Virginia Beach city         ,51,810,155960,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
 VA ,Virginia,Warren                      ,51,187,12290,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
 VA ,Virginia,Washington                  ,51,191,29180,90,KINGSPORT (TN) - JOHNSON CITY (TN) - BRISTOL (TN)                    
-VA ,Virginia,Waynesboro city             ,51,820,0,178,HARRISONBURG                                                         
+VA ,Virginia,Waynesboro city             ,51,820,0,178,HARRISONBURG (VA)                                                    
 VA ,Virginia,Westmoreland                ,51,193,6790,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
-VA ,Virginia,Williamsburg city           ,51,830,0,41,NORFOLK-PORTSMTH-NEWPT NWS                                           
-VA ,Virginia,Winchester city             ,51,840,0,8,"WASHINGTON, DC(HAGRSTWN)                                             "
+VA ,Virginia,Williamsburg city           ,51,830,0,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
+VA ,Virginia,Winchester city             ,51,840,0,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
 VA ,Virginia,Wise                        ,51,195,17460,90,KINGSPORT (TN) - JOHNSON CITY (TN) - BRISTOL (TN)                    
 VA ,Virginia,Wythe                       ,51,197,11960,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,York                        ,51,199,25140,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   
