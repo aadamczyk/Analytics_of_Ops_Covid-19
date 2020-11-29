@@ -2,6 +2,7 @@ library(readr)
 library(stringr)
 library(dplyr)
 library(lubridate)
+library(tidyr)
 
 acs_dma <- read_csv("acs_dma_final.csv")
 
@@ -20,40 +21,45 @@ mobility %>%
 nyt_acs_dma %>%
     filter(date >= "2020-02-15") -> nyt_acs_dma
 
-# TODO: should have 210 DMAs, not 216. Have errors in mobility creation file
-mobility %>%
-    select(DMA) %>%
-    unique() %>%
-    arrange() -> temp
-
-nyt_acs_mob <- full_join(nyt_acs_dma, mobility,
+nyt_acs_mob <- left_join(nyt_acs_dma, mobility,
                          by = c("date" = "date", "DMA" = "DMA"))
-
-# TODO: should have 210 DMAs, not 216. Have errors in mobility creation file
-nyt_acs_mob %>%
-    select(DMA) %>%
-    unique() %>%
-    arrange() -> temp
-
-# Missing Data Summary
-missing <- nyt_acs_mob[!complete.cases(nyt_acs_mob),]
-
-missing %>%
-    select(date:cases, TotPop_sum, id:w_workplaces_percent_change_from_baseline) -> missing
-
-missing %>%
-    group_by(DMA) %>%
-    summarise(n = n()) %>%
-    arrange(desc(n))
-
-mice::md.pattern(missing)
-
-# TODO impute missing variables
-# library("Hmisc")
-# impute(abalone$height, mean)
 
 nyt_acs_mob %>%
     select(-id) -> nyt_acs_mob
+
+nyt_acs_mob %>%
+    rename(mob_retail_and_rec = w_retail_and_recreation_percent_change_from_baseline,
+           mob_grocery = w_grocery_and_pharmacy_percent_change_from_baseline,
+           mob_work = w_workplaces_percent_change_from_baseline) -> nyt_acs_mob
+
+# Fill in missing values with the average from their DMA
+nyt_acs_mob %>%
+    group_by(DMA) %>%
+    mutate(mob_retail_and_rec = ifelse(is.na(mob_retail_and_rec),
+                                     mean(mob_retail_and_rec,na.rm=TRUE),
+                                     mob_retail_and_rec),
+           mob_grocery = ifelse(is.na(mob_grocery),
+                                     mean(mob_grocery,na.rm=TRUE),
+                                     mob_grocery),
+           mob_work = ifelse(is.na(mob_work),
+                                     mean(mob_work,na.rm=TRUE),
+                                     mob_work)) %>%
+    ungroup() -> nyt_acs_mob
+
+# For ones that are completely missing, replace with the average value from the
+# US for that day
+nyt_acs_mob %>%
+    group_by(date) %>%
+    mutate(mob_retail_and_rec = ifelse(is.na(mob_retail_and_rec),
+                                       mean(mob_retail_and_rec,na.rm=TRUE),
+                                       mob_retail_and_rec),
+           mob_grocery = ifelse(is.na(mob_grocery),
+                                mean(mob_grocery,na.rm=TRUE),
+                                mob_grocery),
+           mob_work = ifelse(is.na(mob_work),
+                             mean(mob_work,na.rm=TRUE),
+                             mob_work)) %>%
+    ungroup() -> nyt_acs_mob
 
 trends <- read_csv("Data/TrendsData.csv")
 
