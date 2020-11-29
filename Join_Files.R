@@ -68,19 +68,44 @@ dma_location <- dma_location[,c("DMA", "geo_code")]
 
 trends <- left_join(trends, dma_location, by = c("geo" = "geo_code"))
 
-# Palm Springs doesn't cover a full county, so we'll drop it
-table(trends[!complete.cases(trends),][,"geo"])->temp
-trends <- trends[complete.cases(trends),]
-
-#TODO missing data for "ALPENA (MI)" "US-MI-583" - No trend information
+#Remove Palm Springs since it doesn't cover a full county
+trends %>%
+    filter(geo != "US-CA-804") -> trends
 
 trends %>%
     select(date, DMA, hits.adj) -> trends
 
+# Impute missing values in trends
+# Take the average search volume for the country for that day since no data
+# is available for the DMA
 trends %>%
-    select(date, DMA, hits.adj) -> trends
+    group_by(date) %>%
+    mutate(hits.adj = ifelse(is.na(hits.adj),
+                             mean(hits.adj, na.rm = TRUE),
+                             hits.adj)) %>%
+    ungroup() -> trends
 
 nyt_acs_mob_trend <- left_join(nyt_acs_mob, trends,
                                by = c("date" = "date", "DMA" = "DMA"))
 
-write_csv(nyt_acs_mob_trend, "nyt_acs_mob_trend.csv")
+trends %>%
+    select(DMA) %>%
+    unique() ->temp2
+
+nyt_acs_mob_trend %>%
+    select(DMA) %>%
+    unique() %>%
+    arrange() -> temp3
+
+# It's ok that we don't have mobility data for the last month, these will be the
+# results from the model, so we won't need the inputs, only the number of cases
+temp <- nyt_acs_mob_trend[!complete.cases(nyt_acs_mob_trend),]
+temp %>%
+    select(date:NEVER, TotPop_sum, mob_retail_and_rec:hits.adj) -> temp
+
+temp %>%
+    group_by(DMA) %>%
+    summarise(n = n()) %>%
+    arrange(desc(n))
+
+write_csv(nyt_acs_mob_trend, "Data/nyt_acs_mob_trend.csv")

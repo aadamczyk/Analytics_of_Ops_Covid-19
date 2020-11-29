@@ -5,4 +5,6 @@
 Data/*
 nyt_acs_mob_trend.csv
 *.zip
-raw_data/2020_US_Region_Mobility_Report.csv
+raw_data/*
+raw_data/dmaGeoCodeCrosswalk.csv
+mobility_w_dma_clean.csv

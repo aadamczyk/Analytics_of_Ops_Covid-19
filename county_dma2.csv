@@ -2807,7 +2807,7 @@ VA ,Virginia,Bedford                     ,51,19,27660,67,ROANOKE (VA) - LYNCHBUR
 VA ,Virginia,Bedford City                ,51,515,0,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Bland                       ,51,21,2630,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Botetourt                   ,51,23,12240,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
-VA ,Virginia,Bristol city                ,51,520,0,90,"TRI-CITIES, TN-VA                                                    "
+VA ,Virginia,Bristol city                ,51,520,0,90,KINGSPORT (TN) - JOHNSON CITY (TN) - BRISTOL (TN)
 VA ,Virginia,Brunswick                   ,51,25,6390,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Buchanan                    ,51,27,10000,90,KINGSPORT (TN) - JOHNSON CITY (TN) - BRISTOL (TN)                    
 VA ,Virginia,Buckingham                  ,51,29,5560,59,RICHMOND (VA) - PETERSBURG (VA)                                      
@@ -2888,7 +2888,7 @@ VA ,Virginia,Nottoway                    ,51,135,5710,59,RICHMOND (VA) - PETERSB
 VA ,Virginia,Orange                      ,51,137,10310,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Page                        ,51,139,9350,8,WASHINGTON (DC) - HAGERSTOWN (MD)                                    
 VA ,Virginia,Patrick                     ,51,141,8400,46,GREENSBORO (NC) - HIGH POINT (NC) - WINSTON SALEM (NC)               
-VA ,Virginia,Petersburg city             ,51,730,0,90,"TRI-CITIES, TN-VA                                                    "
+VA ,Virginia,Petersburg city             ,51,730,0,90,KINGSPORT (TN) - JOHNSON CITY (TN) - BRISTOL (TN)
 VA ,Virginia,Pittsylvania                ,51,143,45840,67,ROANOKE (VA) - LYNCHBURG (VA)                                        
 VA ,Virginia,Poquoson city               ,51,735,0,59,RICHMOND (VA) - PETERSBURG (VA)                                      
 VA ,Virginia,Portsmouth city             ,51,740,37660,41,NORFOLK (VA) - PORTSMOUTH (VA) - NEWPORT NEWS (VA)                   

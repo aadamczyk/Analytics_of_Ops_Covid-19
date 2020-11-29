@@ -44,6 +44,8 @@ for (i in 1:nrow(dmas)){
     print(i)
 }
 
+write_csv(OverTimeDMA1, "raw_data/trends1.csv")
+
 OverTimeDMA2 <- as.data.frame(NULL)
 for (i in 1:nrow(dmas)){
     query1 <- gtrends(keyword = "covid symptoms", time = "2020-05-20 2020-10-09",
@@ -58,6 +60,9 @@ for (i in 1:nrow(dmas)){
     print(i)
 }
 
+write_csv(OverTimeDMA2, "raw_data/trends2.csv")
+
+OverTimeDMA1 <- read_csv("raw_data/trends1.csv")
 
 # We'll take the overlapping days and estimate the relationship between them.
 # Google introduces noise into each observation, so the ratio can't be perfectly
@@ -76,10 +81,15 @@ overlap_days <- left_join(overlap_days_1, overlap_days_2,
 overlap_days <- as_tibble(overlap_days)
 
 overlap_days %>%
-    mutate(ratio = hits.y / hits.x) %>%
-    filter(!(ratio == Inf)) %>%
+    mutate(ratio = hits.y / hits.x,
+           ratio = ifelse(ratio == Inf,
+                          NA,
+                          ratio)) %>%
     group_by(geo) %>%
-    summarise(avg_ratio = mean(ratio, na.rm = T)) -> days_scalar
+    summarise(avg_ratio = mean(ratio, na.rm = T)) %>%
+    mutate(avg_ratio = ifelse(is.nan(avg_ratio),
+                          0,
+                          avg_ratio)) -> days_scalar
 
 # Now we'll multiply the first set of days by their respective scalar to
 # transform it to be on the same scale as the second set of dates

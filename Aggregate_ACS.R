@@ -3,9 +3,9 @@ library(stringr)
 
 acs <- read_csv("ACS.csv")
 
-county_DMA <- read_csv("county_dma.csv")
+county_DMA <- read_csv("county_dma2.csv")
 
-county_DMA$Geo <- paste(county_DMA$COUNTY, county_DMA$STATE, sep = ",")
+county_DMA$Geo <- paste(county_DMA$COUNTY, county_DMA$STATE_ABBR, sep = ",")
 county_DMA$Geo <- tolower(county_DMA$Geo)
 
 acs$`Geographic Area Name` <- tolower(acs$`Geographic Area Name`)
@@ -13,6 +13,9 @@ acs$`Geographic Area Name` <- tolower(acs$`Geographic Area Name`)
 acs <- acs[!grepl("puerto rico", acs$`Geographic Area Name`),]
 acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
                                               pattern = "county",
+                                              replacement = "")
+acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
+                                              pattern = "parish",
                                               replacement = "")
 acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
                                               pattern = " , ",
@@ -81,15 +84,6 @@ acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name
                                               pattern = ", ",
                                               replacement = ",")
 acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
-                                              pattern = "lasalle",
-                                              replacement = "la salle")
-acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
-                                              pattern = "dekalb,in",
-                                              replacement = "de kalb,in")
-acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
-                                              pattern = "laporte",
-                                              replacement = "la porte")
-acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
                                               pattern = "maine$",
                                               replacement = "me")
 acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
@@ -129,9 +123,6 @@ acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name
                                               pattern = "new mexico$",
                                               replacement = "nm")
 acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
-                                              pattern = "de baca",
-                                              replacement = "debaca")
-acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
                                               pattern = "new york$",
                                               replacement = "ny")
 acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
@@ -152,9 +143,6 @@ acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name
 acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
                                               pattern = "pennsylvania$",
                                               replacement = "pa")
-acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
-                                              pattern = "mckean",
-                                              replacement = "mc kean")
 acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
                                               pattern = "rhode island$",
                                               replacement = "ri")
@@ -197,6 +185,15 @@ acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name
 acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
                                               pattern = "juneau city and borough",
                                               replacement = "juneau borough")
+acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
+                                              pattern = "broomfield",
+                                              replacement = "boulder")
+acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
+                                              pattern = "oglala lakota",
+                                              replacement = "shannon")
+acs$`Geographic Area Name` <- str_replace_all(string = acs$`Geographic Area Name`,
+                                              pattern = "do.*a ana",
+                                              replacement = "dona ana")
 
 acs$`Geographic Area Name`[!(acs$`Geographic Area Name` %in% county_DMA$Geo)]
 
@@ -206,7 +203,7 @@ acs_dma <- inner_join(acs, county_DMA, by = c("Geographic Area Name" = "Geo"))
 
 acs_dma %>%
     select(-c(STATE, COUNTY, STATEFP, CNTYFP, CNTYTVHH, DMAINDEX, id,
-              `Geographic Area Name`)) -> acs_dma
+              `Geographic Area Name`, STATE_ABBR)) -> acs_dma
 
 acs_dma %>%
     group_by(DMA) %>%
