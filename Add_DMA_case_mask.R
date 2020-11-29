@@ -3,6 +3,7 @@ library(dplyr)
 library(stringr)
 library(purrr)
 library(lubridate)
+library(DataCombine)
 
 nyt <- read_csv("cleaned_case_mask_data_1126.csv")
 
@@ -125,6 +126,46 @@ nyt %>%
               RARELY = sum(RARELY),
               SOMETIMES = sum(SOMETIMES),
               FREQUENTLY = sum(FREQUENTLY),
-              ALWAYS = sum(ALWAYS)) -> nyt
+              ALWAYS = sum(ALWAYS)) %>%
+    arrange(DMA, date) -> nyt
 
-write_csv(nyt, "Data/cleaned_case_mask_DMAs.csv")
+##Adding Case Lags -1 to 14
+nytimes_dma_lag<- slide(nyt, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-1", slideBy = -1)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-2", slideBy = -2)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-3", slideBy = -3)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-4", slideBy = -4)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-5", slideBy = -5)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-6", slideBy = -6)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-7", slideBy = -7)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-8", slideBy = -8)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-9", slideBy = -9)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-10", slideBy = -10)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-11", slideBy = -11)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-12", slideBy = -12)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-13", slideBy = -13)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CaseLagDay-14", slideBy = -14)
+##Leading cases and deaths
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                          NewVar = "CasesIn14Days", slideBy = +14)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_cases", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "CasesIn28Days", slideBy = +28)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_deaths", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "DeathsIn14Days", slideBy = +14)
+nytimes_dma_lag<- slide(nytimes_dma_lag, Var = "new_deaths", GroupVar = "DMA", TimeVar = "date",
+                        NewVar = "DeathsIn28Days", slideBy = +28)
+
+write_csv(nytimes_dma_lag, "Data/cleaned_case_mask_DMAs.csv")

@@ -18,8 +18,10 @@ mobility %>%
     select(-X1) -> mobility
 
 # Filter out data from before the mobility dataset starts
+# And after the case data ends
 nyt_acs_dma %>%
-    filter(date >= "2020-02-15") -> nyt_acs_dma
+    filter(date >= "2020-02-15",
+           date <= "2020-10-09") -> nyt_acs_dma
 
 nyt_acs_mob <- left_join(nyt_acs_dma, mobility,
                          by = c("date" = "date", "DMA" = "DMA"))
@@ -88,24 +90,4 @@ trends %>%
 nyt_acs_mob_trend <- left_join(nyt_acs_mob, trends,
                                by = c("date" = "date", "DMA" = "DMA"))
 
-trends %>%
-    select(DMA) %>%
-    unique() ->temp2
-
-nyt_acs_mob_trend %>%
-    select(DMA) %>%
-    unique() %>%
-    arrange() -> temp3
-
-# It's ok that we don't have mobility data for the last month, these will be the
-# results from the model, so we won't need the inputs, only the number of cases
-temp <- nyt_acs_mob_trend[!complete.cases(nyt_acs_mob_trend),]
-temp %>%
-    select(date:NEVER, TotPop_sum, mob_retail_and_rec:hits.adj) -> temp
-
-temp %>%
-    group_by(DMA) %>%
-    summarise(n = n()) %>%
-    arrange(desc(n))
-
-write_csv(nyt_acs_mob_trend, "Data/nyt_acs_mob_trend.csv")
+write_csv(nyt_acs_mob_trend, "Data/Final_Merge_COVID.csv")
