@@ -4,3 +4,5 @@
 
 Data/*
 nyt_acs_mob_trend.csv
+*.zip
+raw_data/2020_US_Region_Mobility_Report.csv
